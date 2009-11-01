@@ -28,7 +28,7 @@ import time
 
 import warnings
 
-os.environ['LANG']="fa_IR.UTF-8"
+#os.environ['LANG']="fa_IR.UTF-8"
 
 BORDER_WIDTH = 0
 days_in_months=( [0,31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 365],
@@ -37,7 +37,7 @@ days_in_months=( [0,31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 365],
 month_length = ( [0,31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29],
                  [0,31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30])
 
-gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
+#gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
 
 
 mon_name = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور"
@@ -93,13 +93,16 @@ class Calendar(gtk.VBox):
         gtk.VBox.__init__(self)
         
         #register pcalender as widget
-        gobject.signal_new("month-changed",pcalendar, gobject.SIGNAL_RUN_LAST ,
-                   gobject.TYPE_NONE, [gobject.TYPE_INT,gobject.TYPE_INT,gobject.TYPE_INT])
-        gobject.signal_new("day_selected",pcalendar, gobject.SIGNAL_RUN_LAST ,
-                   gobject.TYPE_NONE, [gobject.TYPE_INT,gobject.TYPE_INT,gobject.TYPE_INT])
-        gobject.signal_new("day-selected-double-click",pcalendar, gobject.SIGNAL_RUN_LAST ,
-                   gobject.TYPE_NONE, [gobject.TYPE_INT,gobject.TYPE_INT,gobject.TYPE_INT])
-        gobject.type_register(pcalendar) 
+        try:
+            gobject.signal_new("month-changed",pcalendar, gobject.SIGNAL_RUN_LAST ,
+                       gobject.TYPE_NONE, [gobject.TYPE_INT,gobject.TYPE_INT,gobject.TYPE_INT])
+            gobject.signal_new("day_selected",pcalendar, gobject.SIGNAL_RUN_LAST ,
+                       gobject.TYPE_NONE, [gobject.TYPE_INT,gobject.TYPE_INT,gobject.TYPE_INT])
+            gobject.signal_new("day-selected-double-click",pcalendar, gobject.SIGNAL_RUN_LAST ,
+                       gobject.TYPE_NONE, [gobject.TYPE_INT,gobject.TYPE_INT,gobject.TYPE_INT])
+            gobject.type_register(pcalendar) 
+        except:
+            pass
         
         #get current date              
         jdate=utility.convert_to_jalali(time.time())       
@@ -136,8 +139,8 @@ class Calendar(gtk.VBox):
         self.cal=pcalendar(self.year,self.month,self.day)
         
         self.cal.connect("month-changed",self.monthchange)
-        self.cal.connect("day_selected",self.daychange)
-        self.cal.connect("day-selected-double-click",self.daychange)
+        self.cal.connect("day_selected",self.daychange,'day_selected')
+        self.cal.connect("day-selected-double-click",self.daychange,'day-selected-double-click')
         self.vbox.pack_start(self.cal ,1 ,1, 0)
         
         self.header.yearnum.set_label("<b>"+self.convert_to_str(self.year)+"</b>")
@@ -233,15 +236,16 @@ class Calendar(gtk.VBox):
         self.header.yearnum.set_label("<b>"+self.convert_to_str(year)+"</b>")
         self.header.monthname.set_label(' <b>'+mon_name[month-1]+'</b> ')
         self.change_lable(day)
-        self.emit('month-changed',self)
+        self.emit('month-changed')
         
-    def daychange(self,obj=None,month=None,year=None,day=None):
+    def daychange(self,obj=None,month=None,year=None,day=None,event=None):
         self.change_lable(day)
         self.day=day
         self.cal.jday = day
         self.month=month
         self.year=year
-        self.emit('day-selected',self)
+        if event:
+            self.emit(event)
 
     def month_next(self,obj,data=None):
         self.cal.next_month()
@@ -252,7 +256,7 @@ class Calendar(gtk.VBox):
         self.month=month
         self.year=year
         self.change_lable(self.day)
-        self.emit('next-month',self)
+        self.emit('next-month')
         
     def month_prev(self,obj,data=None):
         self.cal.prev_month()
@@ -263,7 +267,7 @@ class Calendar(gtk.VBox):
         self.month=month
         self.year=year
         self.change_lable(self.day)
-        self.emit('prev-month',self)
+        self.emit('prev-month')
 
     def year_next(self,obj,data=None):
         self.cal.next_year()
@@ -271,7 +275,7 @@ class Calendar(gtk.VBox):
         self.header.yearnum.set_label(' <b>'+self.convert_to_str(year)+'</b> ')
         self.year=year
         self.change_lable(self.day)
-        self.emit('next-year',self)
+        self.emit('next-year')
     
     def year_prev(self, obj, data=None):
         self.cal.prev_year()
@@ -279,7 +283,7 @@ class Calendar(gtk.VBox):
         self.header.yearnum.set_label(' <b>'+self.convert_to_str(year)+'</b> ')
         self.year=year
         self.change_lable(self.day)
-        self.emit('prev-year',self)
+        self.emit('prev-year')
 
     def change_lable(self, day):
         self.year = self.cal.get_year()
@@ -586,13 +590,13 @@ class pcalendar(gtk.Widget):
                     self.jyear +=1
                 self.emit("month-changed",self.jyear,self.jmonth,self.jday)
             
+            alloc = self.get_allocation()
+            rect = gdk.Rectangle(0, 0, alloc.width, alloc.height)
+            self.window.invalidate_rect(rect,True)
             if data.type == gdk._2BUTTON_PRESS:
                 self.emit("day-selected-double-click",self.jmonth,self.jyear,self.day[row][col])
             else:
                 self.emit("day_selected",self.jmonth,self.jyear,self.day[row][col])
-            alloc = self.get_allocation()
-            rect = gdk.Rectangle(0, 0, alloc.width, alloc.height)
-            self.window.invalidate_rect(rect,True)
         return True
     
     def find_col(self,x):
@@ -657,13 +661,14 @@ class pcalendar(gtk.Widget):
     def get_day(self):
         return self.jday
 
-gobject.signal_new("prev-month",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [Calendar])
-gobject.signal_new("next-month",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [Calendar])
-gobject.signal_new("next-year",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [Calendar])
-gobject.signal_new("prev-year",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [Calendar])
-gobject.signal_new("day-selected",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [Calendar])
-gobject.signal_new("month-changed",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [Calendar])
-
+gobject.signal_new("prev-month",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+gobject.signal_new("next-month",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+gobject.signal_new("next-year",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+gobject.signal_new("prev-year",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+gobject.signal_new("day-selected",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+gobject.signal_new("day-selected-double-click",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+gobject.signal_new("month-changed",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+    
 
 if __name__ == '__main__':
     window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -671,6 +676,7 @@ if __name__ == '__main__':
     window.set_title("Calendar Example")
     window.connect("destroy", lambda x: gtk.main_quit())
     calendar = Calendar()
+    calendar.select_day(11)
     window.add(calendar)
     window.show_all()
     gtk.main()
