@@ -104,11 +104,14 @@ class Calendar(gtk.VBox):
         except:
             pass
         
-        #get current date              
-        jdate=utility.convert_to_jalali(time.time())       
-        self.year=jdate[0]
-        self.month=jdate[1]
-        self.day=jdate[2]
+        #get current date
+        current_date =datetime.datetime.now()
+        jdate_= utility.GregorianToJalali(current_date.year,current_date.month,current_date.day)
+        self.year,self.month,self.day = jdate_.jyear,jdate_.jmonth,jdate_.jday
+        #jdate=utility.convert_to_jalali(time.time())       
+        #self.year=jdate[0]
+        #self.month=jdate[1]
+        #self.day=jdate[2]
         self.lastday = self.day
         self.lastmin = -1       
         
@@ -679,7 +682,7 @@ if __name__ == '__main__':
     window.connect("destroy", lambda x: gtk.main_quit())
     calendar = Calendar()
     #calendar.connect("month-changed", sayHello)
-    calendar.select_month(10,1388)
+    #calendar.select_month(10,1388)
     window.add(calendar)
     window.show_all()
     gtk.main()
