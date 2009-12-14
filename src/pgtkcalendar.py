@@ -28,7 +28,7 @@ import time
 
 import warnings
 
-#os.environ['LANG']="fa_IR.UTF-8"
+os.environ['LANG']="fa_IR.UTF-8"
 
 BORDER_WIDTH = 0
 days_in_months=( [0,31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 365],
@@ -37,7 +37,7 @@ days_in_months=( [0,31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 365],
 month_length = ( [0,31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29],
                  [0,31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30])
 
-#gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
+gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
 
 
 mon_name = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور"
@@ -108,10 +108,7 @@ class Calendar(gtk.VBox):
         current_date =datetime.datetime.now()
         jdate_= utility.GregorianToJalali(current_date.year,current_date.month,current_date.day)
         self.year,self.month,self.day = jdate_.jyear,jdate_.jmonth,jdate_.jday
-        #jdate=utility.convert_to_jalali(time.time())       
-        #self.year=jdate[0]
-        #self.month=jdate[1]
-        #self.day=jdate[2]
+
         self.lastday = self.day
         self.lastmin = -1       
         
@@ -151,9 +148,7 @@ class Calendar(gtk.VBox):
 
         self.box2.show_all()
         self.change_lable(self.day)
-        
-            
-    #added by Mahdieh         
+                
     def get_date(self,type='j'):
         if type == 'j': 
             return self.year,self.month-1,self.day 
@@ -215,7 +210,6 @@ class Calendar(gtk.VBox):
     def thaw(self):
         warnings.warn("gtk_calendar_thaw: will be assert in future",GtkWarning,stacklevel=2)
         
-##################################################################### 
 
     def _get_text(nodelist):
         rc = u""
