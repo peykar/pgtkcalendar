@@ -298,7 +298,6 @@ class pcalendar(gtk.Widget):
     row_height = [0,0,0,0,0,0]
     col_width = [0,0,0,0,0,0,0]
     day=[]
-    day_mil=[]
     current_day=[0,0]
     cheight = 146
     def __init__(self,year,month,day):
@@ -323,7 +322,6 @@ class pcalendar(gtk.Widget):
                 tmp.append(0)
                 j+=1
             self.day.append(tmp)
-            self.day_mil.append(tmp)
             tmp=[]
             i+=1
             j=1
