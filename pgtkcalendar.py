@@ -314,17 +314,9 @@ class pcalendar(gtk.Widget):
         self.jyear=year
         self.jmonth=month
         self.jday=day
-        i=1
-        j=1
-        tmp=[]
-        while(i<7):
-            while(j<8):
-                tmp.append(0)
-                j+=1
-            self.day.append(tmp)
-            tmp=[]
-            i+=1
-            j=1
+
+        self.day = [[0]*7 for i in xrange(6)] # Note: We can not use code like: self.day = [[0]*7]*6 because it's not a real copy,
+                                              # It only makes a list of 6 pointers to a unique [0]*7 list
 
     def day_of_week(self,year,month,day):
         days=utility.scalar_Days(year,month,day)
