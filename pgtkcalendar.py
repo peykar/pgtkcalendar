@@ -220,15 +220,15 @@ class Calendar(gtk.VBox):
         return name,rc.strip()
     
     
-    def convert_to_str(self,num):
-        s = str(num)
-        uni_c = [u'\u06f0',u'\u06f1',u'\u06f2',u'\u06f3',u'\u06f4',u'\u06f5',u'\u06f6',u'\u06f7',u'\u06f8',u'\u06f9']
-        res = u""
-        if len(s)>0:
-            for i in s:
-                res += uni_c[int(i)]
-        return res
-        
+    def convert_to_str(self, value):
+        value = unicode(value)
+        _map = {u'0': u'\u06f0', u'1': u'\u06f1', u'2': u'\u06f2', u'3': u'\u06f3', u'4': u'\u06f4',
+                u'5': u'\u06f5', u'6': u'\u06f6', u'7': u'\u06f7', u'8': u'\u06f8', u'9': u'\u06f9'}
+        for char in set(value):
+            try: value = value.replace(char, _map[char])
+            except: pass
+        return value
+
     def monthchange(self,obj=None,year=None,month=None,day=None):
         self.header.yearnum.set_label("<b>"+self.convert_to_str(year)+"</b>")
         self.header.monthname.set_label(' <b>'+mon_name[month-1]+'</b> ')
