@@ -648,13 +648,9 @@ class pcalendar(gtk.Widget):
     def get_day(self):
         return self.jday
 
-gobject.signal_new("prev-month",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
-gobject.signal_new("next-month",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
-gobject.signal_new("next-year",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
-gobject.signal_new("prev-year",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
-gobject.signal_new("day-selected",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
-gobject.signal_new("day-selected-double-click",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
-gobject.signal_new("month-changed",Calendar, gobject.SIGNAL_RUN_LAST ,gobject.TYPE_NONE, [])
+for _signal in ('prev-month', 'next-month', 'next-year', 'prev-year',
+                'day-selected', 'day-selected-double-click', 'month-changed'):
+    gobject.signal_new(_signal, Calendar, gobject.SIGNAL_RUN_LAST , gobject.TYPE_NONE, [])
 
 def sayHello(widget):
     print widget.get_date()    
